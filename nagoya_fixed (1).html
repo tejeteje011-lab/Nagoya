@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나고야 여행 플랜 🇯🇵</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0efe8;
+    --muted: #7a7a8a;
+    --accent: #e8c97a;
+    --accent2: #7ec8c8;
+    --accent3: #e87a7a;
+    --go: #7ac8a0;
+    --shop: #c8a07a;
+    --move: #8a8aaa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 56px 20px 36px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #1a1030 0%, #0f0f13 60%);
+  }
+  .hero::before {
+    content: '名古屋';
+    position: absolute;
+    top: -10px; right: -10px;
+    font-size: 120px;
+    font-family: serif;
+    color: rgba(232,201,122,0.06);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -4px;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  /* FLIGHT CARDS */
+  .flights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .flight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .flight-dir {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .flight-route {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .flight-detail {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* HOTEL STRIP */
+  .hotel-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 10px 20px 0;
+  }
+  .hotel-icon {
+    width: 36px; height: 36px;
+    background: rgba(232,201,122,0.12);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .hotel-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .hotel-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* DAY TABS */
+  .tabs-wrap {
+    padding: 24px 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    padding-bottom: 16px;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    min-height: 44px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f0f13;
+    font-weight: 700;
+  }
+
+  /* DAY PANELS */
+  .panel { display: none; padding: 0 20px; }
+  .panel.show { display: block; }
+
+  .day-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .day-date {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .day-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .day-title em { font-style: italic; color: var(--accent2); }
+
+  /* ALERT BOX */
+  .alert {
+    background: rgba(232,122,122,0.1);
+    border: 1px solid rgba(232,122,122,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #f0b0b0;
+  }
+  .alert strong { color: var(--accent3); font-weight: 700; }
+  .alert-info {
+    background: rgba(126,200,200,0.08);
+    border-color: rgba(126,200,200,0.2);
+    color: #a0d8d8;
+  }
+  .alert-info strong { color: var(--accent2); }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; }
+  .tl-item {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+  .tl-item:not(:last-child) .tl-line::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    bottom: -12px;
+    width: 1px;
+    background: var(--border);
+    transform: translateX(-50%);
+  }
+  .tl-left {
+    flex-shrink: 0;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+  }
+  .tl-line { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .tl-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    border: 2px solid;
+    background: var(--bg);
+    position: relative;
+    z-index: 1;
+  }
+  .dot-sightseeing { border-color: var(--accent2); color: var(--accent2); }
+  .dot-food { border-color: var(--go); color: var(--go); }
+  .dot-move { border-color: var(--move); color: var(--move); }
+  .dot-shop { border-color: var(--shop); color: var(--shop); }
+  .dot-alert { border-color: var(--accent3); color: var(--accent3); }
+  .dot-key { border-color: var(--accent); color: var(--accent); }
+
+  .tl-body {
+    flex: 1;
+    padding-bottom: 20px;
+  }
+  .tl-time {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .tl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .tl-card:hover { border-color: rgba(255,255,255,0.14); }
+  .tl-place {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .tl-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tl-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .tag-yellow { background: rgba(232,201,122,0.15); color: var(--accent); border: 1px solid rgba(232,201,122,0.25); }
+  .tag-teal { background: rgba(126,200,200,0.12); color: var(--accent2); border: 1px solid rgba(126,200,200,0.2); }
+  .tag-red { background: rgba(232,122,122,0.12); color: var(--accent3); border: 1px solid rgba(232,122,122,0.2); }
+  .tag-green { background: rgba(122,200,160,0.12); color: var(--go); border: 1px solid rgba(122,200,160,0.2); }
+  .tag-gray { background: rgba(138,138,170,0.12); color: var(--move); border: 1px solid rgba(138,138,170,0.2); }
+  .tag-orange { background: rgba(200,160,122,0.12); color: var(--shop); border: 1px solid rgba(200,160,122,0.2); }
+  .tag-star { background: rgba(232,201,122,0.2); color: var(--accent); border: 1px solid rgba(232,201,122,0.3); }
+
+  /* SUMMARY CHIPS */
+  .summary-section {
+    padding: 0 20px;
+    margin-bottom: 8px;
+  }
+  .summary-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .chip-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chip-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .chip-emoji { font-size: 18px; flex-shrink: 0; padding-top: 1px; }
+  .chip-label { font-size: 12px; color: var(--muted); margin-bottom: 3px; font-weight: 500; }
+  .chip-val { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(15,15,19,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px 20px;
+    display: flex;
+    gap: 6px;
+    z-index: 200;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bottom-nav::-webkit-scrollbar { display: none; }
+  .bnav-btn {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.2s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .bnav-btn.active {
+    background: rgba(232,201,122,0.12);
+    border-color: rgba(232,201,122,0.35);
+  }
+  .bnav-day {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .bnav-btn.active .bnav-day { color: var(--accent); }
+  .bnav-label {
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  /* DIVIDER */
+  .sect-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0 20px;
+  }
+
+  @media (min-width: 480px) {
+    .hero-title { font-size: 48px; }
+    .hero::before { font-size: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">✈ Japan Travel Plan</div>
+  <h1 class="hero-title"><em>Nagoya</em><br>여행 플랜</h1>
+  <div class="hero-sub">2026 · 5/15(금) — 5/18(월) · 4박3일</div>
+  <div class="flights">
+    <div class="flight-card">
+      <div class="flight-dir">↗ 가는 편</div>
+      <div class="flight-route">OZ124<br>인천T2 16:10<br>나고야 18:00</div>
+      <div class="flight-detail">5/15 금 · 이코노미</div>
+    </div>
+    <div class="flight-card">
+      <div class="flight-dir">↙ 오는 편</div>
+      <div class="flight-route">OZ123<br>나고야 19:10<br>인천T2 21:10</div>
+      <div class="flight-detail">5/18 월 · 이코노미</div>
+    </div>
+  </div>
+</div>
+
+<div class="hotel-strip">
+  <div class="hotel-icon">🏨</div>
+  <div>
+    <div class="hotel-name">니시테츠호텔 크룸 나고야</div>
+    <div class="hotel-sub">나고야 니시키3초메 · 사카에 도보권 · ★4.4</div>
+  </div>
+</div>
+
+<!-- TABS (sticky) -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="show('d1',0)">5/15 금</button>
+    <button class="tab" onclick="show('d2',1)">5/16 토</button>
+    <button class="tab" onclick="show('d3',2)">5/17 일</button>
+    <button class="tab" onclick="show('d4',3)">5/18 월</button>
+  </div>
+</div>
+
+<!-- ===== D1 ===== -->
+<div id="d1" class="panel show">
+  <div class="day-heading">
+    <div>
+      <div class="day-date">Day 1 · 5월 15일 금요일</div>
+      <div class="day-title">도착 &amp;<br><em>첫 저녁</em></div>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>⏱ 공항→호텔 예상</strong><br>
+    도착 18:00 → 수하물 30~40분 → 메이테츠 28분 → 나고야역 19:10 → 호텔 도보 10분 → 19:25 도착
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-alert">✈</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">18:00</div>
+        <div class="tl-card">
+          <div class="tl-place">츄부국제공항 도착</div>
+          <div class="tl-desc">입국심사 + 수하물 수취. 이코노미 짐 찾는 시간 30~40분 예상</div>
+          <div class="tl-tags"><span class="tag tag-gray">짐 수취 30~40분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-move">→</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">18:40</div>
+        <div class="tl-card">
+          <div class="tl-place">공항 → 나고야역 → 호텔</div>
+          <div class="tl-desc">메이테츠 특급 28분 / 870엔 → 나고야역 하차 → 니시키3초메 호텔까지 도보 10분</div>
+          <div class="tl-tags"><span class="tag tag-gray">메이테츠 870엔</span><span class="tag tag-gray">약 40분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-sightseeing">★</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">20:00</div>
+        <div class="tl-card">
+          <div class="tl-place">오아시스21 + 미라이타워 야경</div>
+          <div class="tl-desc">호텔에서 도보 8분. 유리 우주선 구조물 + TV타워 라이트업. 무료 입장. 밤이 가장 예뻐요 🌙</div>
+          <div class="tl-tags"><span class="tag tag-teal">무료입장</span><span class="tag tag-gray">도보 8분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">20:30</div>
+        <div class="tl-card">
+          <div class="tl-place">야바톤 야바쵸 본점 🐷</div>
+          <div class="tl-desc">미소 카츠 원조 맛집. 오아시스21에서 도보 5분. 21:00까지 입장 가능. 나고야 첫 밥!</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록</span><span class="tag tag-green">나고야메시</span><span class="tag tag-gray">1,000~2,000엔</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== D2 ===== -->
+<div id="d2" class="panel">
+  <div class="day-heading">
+    <div>
+      <div class="day-date">Day 2 · 5월 16일 토요일</div>
+      <div class="day-title">나고야성 +<br><em>오스 + 사카에</em></div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>⚠ 히쓰마부시 하나오카 — 웨이팅 필수!</strong><br>
+    오픈 전(10:30) 현장 웨이팅 리스트에 이름 올리기. 토요일 2~3시간 대기 예상. <strong>현금만 가능 — 1인 5,000엔 준비!</strong> 호텔에서 도보 5분이라 나고야성 갔다 오는 동안 기다리는 루트로!
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-key">!</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">10:30 — 먼저!</div>
+        <div class="tl-card">
+          <div class="tl-place">히쓰마부시 하나오카 — 웨이팅 등록</div>
+          <div class="tl-desc">사카에 선리츠빌 2F. 호텔 도보 5분. 이름 올리고 예상 대기 확인 후 나고야성으로 출발!</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록 ★4.7</span><span class="tag tag-red">현금만!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-sightseeing">★</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">11:00</div>
+        <div class="tl-card">
+          <div class="tl-place">나고야성 🏯</div>
+          <div class="tl-desc">지하철 메이조선 시야쿠쇼역 도보 5분. 금빛 샤치호코 + 혼마루 어전. 약 1.5~2시간</div>
+          <div class="tl-tags"><span class="tag tag-teal">입장 500엔</span><span class="tag tag-gray">지하철 5분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">13:00~14:00</div>
+        <div class="tl-card">
+          <div class="tl-place">히쓰마부시 하나오카 🍱</div>
+          <div class="tl-desc">대기 순서 맞춰 복귀! 장어덮밥 나고야 최고 맛집. 4,000~5,000엔. 현금 준비 필수!</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록 ★4.7</span><span class="tag tag-red">현금 5,000엔/인</span><span class="tag tag-green">4,000~5,000엔</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-shop">¥</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">15:00</div>
+        <div class="tl-card">
+          <div class="tl-place">오스 상점가 — Kapital + 야바톤 주변</div>
+          <div class="tl-desc">Kapital은 오스 상점가 안 위치 (11:00~20:00). 야바톤 야바쵸 본점도 바로 근처. 빈티지숍 + 길거리음식 구경</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록 Kapital ★4.7</span><span class="tag tag-orange">오스칸논역</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-shop">¥</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">17:00</div>
+        <div class="tl-card">
+          <div class="tl-place">사카에 쇼핑 블록 🛍</div>
+          <div class="tl-desc">
+            <b style="color:var(--text)">나고야 파르코</b> (10~20:00) → <b style="color:var(--text)">포켓몬센터</b> 파르코 동관 2F → <b style="color:var(--text)">빔즈</b> 라시크 2F (11~21:00) → <b style="color:var(--text)">베이프</b> (11~19:00 마감 주의!) → <b style="color:var(--text)">몽벨</b> (10~20:00) 다 한 블록!
+          </div>
+          <div class="tl-tags">
+            <span class="tag tag-star">⭐ 파르코·포켓몬·빔즈·베이프·몽벨</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">19:30</div>
+        <div class="tl-card">
+          <div class="tl-place">저녁 — 쿠라스시 or 스시로 사카에점</div>
+          <div class="tl-desc">쇼핑 후 가벼운 회전초밥. 쿠라스시(저장목록) or 스시로(저장목록 ★4.4) 둘 다 사카에에 있어요</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록</span><span class="tag tag-green">1,000~2,000엔</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== D3 ===== -->
+<div id="d3" class="panel">
+  <div class="day-heading">
+    <div>
+      <div class="day-date">Day 3 · 5월 17일 일요일</div>
+      <div class="day-title">나고야항<br><em>수족관 데이</em></div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>⚠ 수족관 사전예약 필수!</strong><br>
+    일요일은 현장 구매 불가할 수 있음. 지금 바로 예약하세요!<br>
+    👉 <a href="https://www.asoview.com" style="color:var(--accent2)">asoview.com</a> 또는 마이리얼트립 · 성인 2,030엔
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-move">→</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">09:30</div>
+        <div class="tl-card">
+          <div class="tl-place">나고야역 → 나고야코역</div>
+          <div class="tl-desc">히가시야마선 → 사카에역에서 메이조선 환승 → 나고야코역 하차 → 도보 5~8분</div>
+          <div class="tl-tags"><span class="tag tag-gray">지하철 25~30분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-sightseeing">★</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">10:00 ~ 14:00</div>
+        <div class="tl-card">
+          <div class="tl-place">나고야항 수족관 🐋</div>
+          <div class="tl-desc">
+            <b style="color:var(--text)">북관</b>: 벨루가·범고래·돌고래 퍼포먼스 (세계 최대급 수조!)<br>
+            <b style="color:var(--text)">남관</b>: 펭귄·심해·남극 테마<br>
+            돌고래쇼 시간 미리 홈피 확인! 최소 3~4시간 여유
+          </div>
+          <div class="tl-tags"><span class="tag tag-red">사전예약 필수</span><span class="tag tag-teal">일본 최대급</span><span class="tag tag-yellow">2,030엔</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">14:00</div>
+        <div class="tl-card">
+          <div class="tl-place">점심 — 가든 부두 식당</div>
+          <div class="tl-desc">수족관 내 레스토랑 또는 항구 주변 식당</div>
+          <div class="tl-tags"><span class="tag tag-green">점심</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-sightseeing">★</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">15:00 (선택)</div>
+        <div class="tl-card">
+          <div class="tl-place">남극 관측선 후지 🚢</div>
+          <div class="tl-desc">수족관 바로 옆 실제 남극 관측선 내부 견학. 통합권(2,440엔)이 단품보다 이득</div>
+          <div class="tl-tags"><span class="tag tag-teal">선택 코스</span><span class="tag tag-gray">통합권 2,440엔</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-move">→</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">16:30</div>
+        <div class="tl-card">
+          <div class="tl-place">나고야역 귀환 + 기념품 정리</div>
+          <div class="tl-desc">에스카·테르미나 지하상가. 내일 귀국이라 기념품 마무리하기 좋아요</div>
+          <div class="tl-tags"><span class="tag tag-gray">에키나카 쇼핑</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">18:30</div>
+        <div class="tl-card">
+          <div class="tl-place">저녁 — 히쓰마부시 하나오카 저녁 타임</div>
+          <div class="tl-desc">점심 타임보다 저녁(18:00~22:00)이 웨이팅이 조금 짧아요. 토요일에 못 갔다면 오늘 도전! 또는 스시로 사카에점</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록</span><span class="tag tag-red">현금 5,000엔/인</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== D4 ===== -->
+<div id="d4" class="panel">
+  <div class="day-heading">
+    <div>
+      <div class="day-date">Day 4 · 5월 18일 월요일</div>
+      <div class="day-title">마지막 아침 +<br><em>귀국</em></div>
+    </div>
+  </div>
+
+  <div class="alert">
+    <strong>⚠ 멘야하나비 타카바타 본점 — 월요일 휴무!</strong><br>
+    저장목록에 있지만 월요일 문 닫아요. 대신 사카에 지점 이용하거나 나고야역 지하 미소라멘으로 대체
+  </div>
+
+  <div class="alert alert-info">
+    <strong>✈ 공항 이동 계산</strong><br>
+    나고야역 15:00 출발 → 메이테츠 28분 → 공항 15:30 → 이코노미 체크인+보안 여유있게 3.5시간 확보
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-shop">¥</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">09:00 ~ 12:00</div>
+        <div class="tl-card">
+          <div class="tl-place">나고야역 에키나카 마지막 쇼핑</div>
+          <div class="tl-desc">테르미나·에스카 지하상가. 과자·기념품 마무리. 숙소 체크아웃 후 짐 프론트에 맡기기</div>
+          <div class="tl-tags"><span class="tag tag-orange">기념품 마무리</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-food">食</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">12:30</div>
+        <div class="tl-card">
+          <div class="tl-place">점심 — 멘야하나비 사카에점 🍜</div>
+          <div class="tl-desc">타카바타 본점은 월요일 휴무라 사카에 지점으로! 나고야 명물 마제소바. 귀국날 마지막 나고야메시</div>
+          <div class="tl-tags"><span class="tag tag-star">⭐ 저장목록</span><span class="tag tag-green">1,000~2,000엔</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-move">→</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">14:30</div>
+        <div class="tl-card">
+          <div class="tl-place">호텔 짐 픽업 → 나고야역 → 공항</div>
+          <div class="tl-desc">메이테츠 특급 28분 / 870엔 → 15:30 공항 도착</div>
+          <div class="tl-tags"><span class="tag tag-gray">메이테츠 870엔</span><span class="tag tag-gray">28분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-line"><div class="tl-dot dot-alert">✈</div></div></div>
+      <div class="tl-body">
+        <div class="tl-time">15:30 ~ 19:10</div>
+        <div class="tl-card">
+          <div class="tl-place">공항 체크인 · 면세 · 탑승</div>
+          <div class="tl-desc">수하물 위탁 후 면세점. OZ123 탑승 19:10 → 인천T2 21:10 도착</div>
+          <div class="tl-tags"><span class="tag tag-red">탑승 19:10</span><span class="tag tag-gray">인천 21:10 도착</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 저장목록 총정리 -->
+  <div class="sect-divider"></div>
+  <div class="summary-section">
+    <div class="summary-title">📋 저장목록 총정리</div>
+    <div class="chip-grid">
+      <div class="chip-row">
+        <div class="chip-emoji">🍱</div>
+        <div>
+          <div class="chip-label">식사</div>
+          <div class="chip-val">히쓰마부시 하나오카 ★4.7 (현금!) · 야바톤 야바쵸 본점 · 멘야하나비 · 쿠라스시 · 스시로 사카에점</div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <div class="chip-emoji">🛍</div>
+        <div>
+          <div class="chip-label">쇼핑</div>
+          <div class="chip-val">나고야 파르코 → 포켓몬센터(파르코 동관2F) → 빔즈 → 베이프(19시 마감!) → 몽벨 · Kapital(오스)</div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <div class="chip-emoji">🎡</div>
+        <div>
+          <div class="chip-label">관광</div>
+          <div class="chip-val">오아시스21+미라이타워(무료) · 나고야성 · 나고야항 수족관(예약 필수!)</div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <div class="chip-emoji">🌿</div>
+        <div>
+          <div class="chip-label">보류 (원하면 추가 가능)</div>
+          <div class="chip-val">지브리파크 — 5/16 토요일 오전에 배치 가능 (나고야역 → 리니모 40분)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bnav-btn active" onclick="show('d1',0)">
+    <span class="bnav-day">5/15 금</span>
+    <span class="bnav-label">도착일</span>
+  </button>
+  <button class="bnav-btn" onclick="show('d2',1)">
+    <span class="bnav-day">5/16 토</span>
+    <span class="bnav-label">나고야성+오스</span>
+  </button>
+  <button class="bnav-btn" onclick="show('d3',2)">
+    <span class="bnav-day">5/17 일</span>
+    <span class="bnav-label">수족관 🐋</span>
+  </button>
+  <button class="bnav-btn" onclick="show('d4',3)">
+    <span class="bnav-day">5/18 월</span>
+    <span class="bnav-label">귀국일</span>
+  </button>
+</div>
+
+<script>
+// 카카오톡 인앱브라우저 → 사파리 강제 오픈
+(function() {
+  var ua = navigator.userAgent.toLowerCase();
+  if (ua.indexOf('kakaotalk') > -1) {
+    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+  }
+})();
+
+const panels = ['d1','d2','d3','d4'];
+function show(id, idx) {
+  panels.forEach(p => document.getElementById(p).classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  const tabs = document.querySelectorAll('.tab');
+  const bnavs = document.querySelectorAll('.bnav-btn');
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  if (bnavs[idx]) bnavs[idx].classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// onclick 대신 이벤트 리스너 방식 (인앱브라우저 호환)
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tab').forEach(function(btn, idx) {
+    btn.addEventListener('click', function(e) { e.preventDefault(); show(panels[idx], idx); });
+    btn.addEventListener('touchend', function(e) { e.preventDefault(); show(panels[idx], idx); });
+  });
+  document.querySelectorAll('.bnav-btn').forEach(function(btn, idx) {
+    btn.addEventListener('click', function(e) { e.preventDefault(); show(panels[idx], idx); });
+    btn.addEventListener('touchend', function(e) { e.preventDefault(); show(panels[idx], idx); });
+  });
+});
+</script>
+</body>
+</html>
